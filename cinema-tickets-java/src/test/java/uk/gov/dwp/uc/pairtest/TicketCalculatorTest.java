@@ -68,7 +68,6 @@ class TicketCalculatorTest {
 
         TicketTypeRequest adultTicketTypeRequestOne = new TicketTypeRequest(Type.ADULT, 2);
         TicketTypeRequest adultTicketTypeRequestTwo = new TicketTypeRequest(Type.ADULT, 3);
-  
 
         int calculatedPrice = ticketCalculator.calculateTotalPrice(adultTicketTypeRequestOne, adultTicketTypeRequestTwo);
 
@@ -76,7 +75,7 @@ class TicketCalculatorTest {
     }
 
     //  Seat Calculation Tests
-     @Test
+    @Test
     void calculatesTotalSeatsForOneAdultTicketType() {
 
         TicketTypeRequest adultTicketTypeRequest = new TicketTypeRequest(Type.ADULT, 1);
@@ -86,5 +85,57 @@ class TicketCalculatorTest {
         assertEquals(1, noOfSeats);
     }
 
+    @Test
+    void calculatesTotalSeatsForOneChildTicketType() {
+
+        TicketTypeRequest childTicketTypeRequest = new TicketTypeRequest(Type.CHILD, 1);
+
+        int noOfSeats = ticketCalculator.calculateTotalSeats(childTicketTypeRequest);
+
+        assertEquals(1, noOfSeats);
+    }
+
+    @Test
+    void calculatesTotalSeatsForOneInfantTicketType() {
+
+        TicketTypeRequest infantTicketTypeRequest = new TicketTypeRequest(Type.INFANT, 1);
+
+        int noOfSeats = ticketCalculator.calculateTotalSeats(infantTicketTypeRequest);
+
+        assertEquals(0, noOfSeats);
+    }
+
+    @Test
+    void calculatesTotalSeatsForMultipleAdultTicketType() {
+
+        TicketTypeRequest adultTicketTypeRequest = new TicketTypeRequest(Type.ADULT, 15);
+
+        int noOfSeats = ticketCalculator.calculateTotalSeats(adultTicketTypeRequest);
+
+        assertEquals(15, noOfSeats);
+    }
+
+    @Test
+    void calculatesTotalSeatsForMixOfTicketType() {
+
+        TicketTypeRequest adultTicketTypeRequest = new TicketTypeRequest(Type.ADULT, 10);
+        TicketTypeRequest childTicketTypeRequest = new TicketTypeRequest(Type.CHILD, 3);
+        TicketTypeRequest infantTicketTypeRequest = new TicketTypeRequest(Type.INFANT, 6);
+
+        int noOfSeats = ticketCalculator.calculateTotalSeats(adultTicketTypeRequest, childTicketTypeRequest, infantTicketTypeRequest);
+
+        assertEquals(13, noOfSeats);
+    }
+
+    @Test
+    void calculatesTotalSeatsWhenSameTypeAppearsInSeparateRequests() {
+
+        TicketTypeRequest adultTicketTypeRequestOne = new TicketTypeRequest(Type.ADULT, 2);
+        TicketTypeRequest adultTicketTypeRequestTwo = new TicketTypeRequest(Type.ADULT, 3);
+
+        int noOfSeats = ticketCalculator.calculateTotalSeats(adultTicketTypeRequestOne, adultTicketTypeRequestTwo);
+
+        assertEquals(5, noOfSeats);
+    }
 
 }
