@@ -10,7 +10,7 @@ import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 
 public class TicketPurchaseValidatorTest {
-    
+
     private final TicketPurchaseValidator ticketPurchaseValidator = new TicketPurchaseValidator();
 
     @Test
@@ -56,7 +56,8 @@ public class TicketPurchaseValidatorTest {
 
         Long accountId = 1L;
 
-        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, (TicketTypeRequest[]) null));
+        assertThrows(InvalidPurchaseException.class,
+                () -> ticketPurchaseValidator.validate(accountId, (TicketTypeRequest[]) null));
     }
 
     @Test
@@ -91,11 +92,11 @@ public class TicketPurchaseValidatorTest {
 
         Long accountId = 1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 25);
-  
+
         assertDoesNotThrow(() -> ticketPurchaseValidator.validate(accountId, adult));
     }
 
-    @Test 
+    @Test
     void shouldThrowWhenChildrenAndInfantsAreRequestedWithoutAdults() {
 
         Long accountId = 1L;
@@ -108,7 +109,7 @@ public class TicketPurchaseValidatorTest {
 
     @Test
     void shouldThrowWhenOnlyChildrenAreRequested() {
-        
+
         Long accountId = 1L;
 
         TicketTypeRequest child = new TicketTypeRequest(Type.CHILD, 1);
@@ -118,7 +119,7 @@ public class TicketPurchaseValidatorTest {
 
     @Test
     void shouldThrowWhenOnlyInfantsAreRequested() {
-        
+
         Long accountId = 1L;
 
         TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 1);
@@ -128,7 +129,7 @@ public class TicketPurchaseValidatorTest {
 
     @Test
     void shouldThrowWhenInfantsOutnumberAdults() {
-        
+
         Long accountId = 1L;
 
         TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 2);
@@ -143,8 +144,8 @@ public class TicketPurchaseValidatorTest {
         Long accountId = 1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
         TicketTypeRequest noType = new TicketTypeRequest(null, 1);
-        
+
         assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult, noType));
-}
+    }
 
 }
