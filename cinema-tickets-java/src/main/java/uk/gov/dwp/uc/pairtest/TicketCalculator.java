@@ -28,8 +28,19 @@ public class TicketCalculator {
     }
 
     public int calculateTotalSeats(TicketTypeRequest... ticketTypeRequests) {
-        
-        return 0;
+        int totalSeats = 0;
+
+        for (TicketTypeRequest ticketTypeRequest : ticketTypeRequests) {
+
+            Type type = ticketTypeRequest.getTicketType();
+            int noOfTickets = ticketTypeRequest.getNoOfTickets();
+
+            if (type == Type.ADULT || type == Type.CHILD) {
+                totalSeats += noOfTickets;
+            }
+        }
+
+        return totalSeats;
     }
 
 }
