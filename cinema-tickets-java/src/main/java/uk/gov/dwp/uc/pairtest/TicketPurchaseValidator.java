@@ -7,7 +7,8 @@ public class TicketPurchaseValidator {
     
     public void validate(Integer accountId, TicketTypeRequest... ticketTypeRequests) {
 
-        if (accountId == null) {
+        if (accountId == null || accountId <= 0
+        ) {
             throw new InvalidPurchaseException();
         }
 

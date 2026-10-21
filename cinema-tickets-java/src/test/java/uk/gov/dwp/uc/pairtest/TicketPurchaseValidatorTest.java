@@ -33,4 +33,13 @@ public class TicketPurchaseValidatorTest {
 
         assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult));
     }
+
+    @Test
+    void shouldThrowWhenAccountIdIsEqualsOrLessThanZero() {
+
+        Integer accountId = 0;
+        TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
+
+        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult));
+    }
 }
