@@ -10,6 +10,7 @@ class TicketCalculatorTest {
 
     private final TicketCalculator ticketCalculator = new TicketCalculator();
 
+    //  Price Calculation Tests
     @Test
     void calculatesPriceForOneAdultTicketType() {
 
@@ -73,4 +74,17 @@ class TicketCalculatorTest {
 
         assertEquals(125, calculatedPrice);
     }
+
+    //  Seat Calculation Tests
+     @Test
+    void calculatesTotalSeatsForOneAdultTicketType() {
+
+        TicketTypeRequest adultTicketTypeRequest = new TicketTypeRequest(Type.ADULT, 1);
+
+        int noOfSeats = ticketCalculator.calculateTotalSeats(adultTicketTypeRequest);
+
+        assertEquals(1, noOfSeats);
+    }
+
+
 }

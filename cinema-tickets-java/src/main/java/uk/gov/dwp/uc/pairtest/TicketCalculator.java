@@ -25,7 +25,11 @@ public class TicketCalculator {
         }
         
         return totalPrice;
+    }
+
+    public int calculateTotalSeats(TicketTypeRequest... ticketTypeRequests) {
         
+        return 0;
     }
 
 }
