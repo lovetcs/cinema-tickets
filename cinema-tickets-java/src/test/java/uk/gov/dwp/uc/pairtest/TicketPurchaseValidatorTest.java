@@ -58,4 +58,22 @@ public class TicketPurchaseValidatorTest {
 
         assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, (TicketTypeRequest[]) null));
     }
+
+    @Test
+    void shouldThrowWhenTicketCountIsZero() {
+
+        Integer accountId = 1;
+        TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 0);
+
+        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult));
+    }
+
+    @Test
+    void shouldThrowWhenTicketCountIsLessThanZero() {
+
+        Integer accountId = 1;
+        TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, -1);
+
+        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult));
+    }
 }
