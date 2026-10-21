@@ -16,7 +16,7 @@ public class TicketPurchaseValidatorTest {
     @Test
     void shouldAcceptValidRequest() {
 
-        Integer accountId = 1;
+        Long accountId = 1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
         TicketTypeRequest child = new TicketTypeRequest(Type.CHILD, 1);
         TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 1);
@@ -28,7 +28,7 @@ public class TicketPurchaseValidatorTest {
     @Test
     void shouldThrowWhenAccountIdIsNull() {
 
-        Integer accountId = null;
+        Long accountId = null;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
 
         assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult));
@@ -37,7 +37,7 @@ public class TicketPurchaseValidatorTest {
     @Test
     void shouldThrowWhenAccountIdIsEqualsOrLessThanZero() {
 
-        Integer accountId = 0;
+        Long accountId = 0L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
 
         assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult));
@@ -46,7 +46,7 @@ public class TicketPurchaseValidatorTest {
     @Test
     void shouldThrowWhenTicketRequestsIsEmpty() {
 
-        Integer accountId = 1;
+        Long accountId = 1L;
 
         assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId));
     }
@@ -54,7 +54,7 @@ public class TicketPurchaseValidatorTest {
     @Test
     void shouldThrowWhenTicketRequestsIsNull() {
 
-        Integer accountId = 1;
+        Long accountId = 1L;
 
         assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, (TicketTypeRequest[]) null));
     }
@@ -62,7 +62,7 @@ public class TicketPurchaseValidatorTest {
     @Test
     void shouldThrowWhenTicketCountIsZero() {
 
-        Integer accountId = 1;
+        Long accountId = 1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 0);
 
         assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult));
@@ -71,7 +71,7 @@ public class TicketPurchaseValidatorTest {
     @Test
     void shouldThrowWhenTicketCountIsLessThanZero() {
 
-        Integer accountId = 1;
+        Long accountId = 1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, -1);
 
         assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult));
@@ -80,7 +80,7 @@ public class TicketPurchaseValidatorTest {
     @Test
     void shouldThrowWhenTicketCountIsOverLimit() {
 
-        Integer accountId = 1;
+        Long accountId = 1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 26);
 
         assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult));
@@ -89,7 +89,7 @@ public class TicketPurchaseValidatorTest {
     @Test
     void shouldAcceptWhenTicketCountIsAtBoundary() {
 
-        Integer accountId = 1;
+        Long accountId = 1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 25);
   
         assertDoesNotThrow(() -> ticketPurchaseValidator.validate(accountId, adult));
@@ -98,7 +98,7 @@ public class TicketPurchaseValidatorTest {
     @Test 
     void shouldThrowWhenChildrenAndInfantsAreRequestedWithoutAdults() {
 
-        Integer accountId = 1;
+        Long accountId = 1L;
 
         TicketTypeRequest child = new TicketTypeRequest(Type.CHILD, 1);
         TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 1);
@@ -109,7 +109,7 @@ public class TicketPurchaseValidatorTest {
     @Test
     void shouldThrowWhenOnlyChildrenAreRequested() {
         
-        Integer accountId = 1;
+        Long accountId = 1L;
 
         TicketTypeRequest child = new TicketTypeRequest(Type.CHILD, 1);
 
@@ -119,11 +119,32 @@ public class TicketPurchaseValidatorTest {
     @Test
     void shouldThrowWhenOnlyInfantsAreRequested() {
         
-        Integer accountId = 1;
+        Long accountId = 1L;
 
         TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 1);
 
         assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, infant));
     }
+
+    @Test
+    void shouldThrowWhenInfantsOutnumberAdults() {
+        
+        Long accountId = 1L;
+
+        TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 2);
+        TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 1);
+
+        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult, infant));
+    }
+
+    @Test
+    void shouldThrowWhenTicketTypeIsNull() {
+
+        Long accountId = 1L;
+        TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
+        TicketTypeRequest noType = new TicketTypeRequest(null, 1);
+        
+        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult, noType));
+}
 
 }
