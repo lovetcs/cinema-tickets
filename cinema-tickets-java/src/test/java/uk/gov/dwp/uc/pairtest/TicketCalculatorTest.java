@@ -8,16 +8,69 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TicketCalculatorTest {
 
+    private final TicketCalculator ticketCalculator = new TicketCalculator();
+
     @Test
-    void oneAdultTicketCosts25Pounds() {
+    void calculatesPriceForOneAdultTicketType() {
 
         TicketTypeRequest adultTicketTypeRequest = new TicketTypeRequest(Type.ADULT, 1);
-
-        TicketCalculator ticketCalculator = new TicketCalculator();
 
         int calculatedPrice = ticketCalculator.calculateTotalPrice(adultTicketTypeRequest);
 
         assertEquals(25, calculatedPrice);
     }
 
+    @Test
+    void calculatesPriceForOneChildTicketType() {
+
+        TicketTypeRequest childTicketTypeRequest = new TicketTypeRequest(Type.CHILD, 1);
+
+        int calculatedPrice = ticketCalculator.calculateTotalPrice(childTicketTypeRequest);
+
+        assertEquals(15, calculatedPrice);
+    }
+
+    @Test
+    void calculatesPriceForOneInfantTicketType() {
+
+        TicketTypeRequest infantTicketTypeRequest = new TicketTypeRequest(Type.INFANT, 1);
+
+        int calculatedPrice = ticketCalculator.calculateTotalPrice(infantTicketTypeRequest);
+
+        assertEquals(0, calculatedPrice);
+    }
+
+    @Test
+    void calculatesPriceForMultipleAdultTicketTypes() {
+
+        TicketTypeRequest adultTicketTypeRequest = new TicketTypeRequest(Type.ADULT, 3);
+
+        int calculatedPrice = ticketCalculator.calculateTotalPrice(adultTicketTypeRequest);
+
+        assertEquals(75, calculatedPrice);
+    }
+
+    @Test
+    void calculatesPriceForMixOfTicketTypes() {
+
+        TicketTypeRequest adultTicketTypeRequest = new TicketTypeRequest(Type.ADULT, 9);
+        TicketTypeRequest childTicketTypeRequest = new TicketTypeRequest(Type.CHILD, 2);
+        TicketTypeRequest infantTicketTypeRequest = new TicketTypeRequest(Type.INFANT, 3);
+
+        int calculatedPrice = ticketCalculator.calculateTotalPrice(adultTicketTypeRequest, childTicketTypeRequest, infantTicketTypeRequest);
+
+        assertEquals(255, calculatedPrice);
+    }
+
+    @Test
+    void calculatesPriceWhenSameTypeAppearsInSeparateRequests() {
+
+        TicketTypeRequest adultTicketTypeRequestOne = new TicketTypeRequest(Type.ADULT, 2);
+        TicketTypeRequest adultTicketTypeRequestTwo = new TicketTypeRequest(Type.ADULT, 3);
+  
+
+        int calculatedPrice = ticketCalculator.calculateTotalPrice(adultTicketTypeRequestOne, adultTicketTypeRequestTwo);
+
+        assertEquals(125, calculatedPrice);
+    }
 }
