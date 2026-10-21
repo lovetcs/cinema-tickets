@@ -76,4 +76,54 @@ public class TicketPurchaseValidatorTest {
 
         assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult));
     }
+
+    @Test
+    void shouldThrowWhenTicketCountIsOverLimit() {
+
+        Integer accountId = 1;
+        TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 26);
+
+        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult));
+    }
+
+    @Test
+    void shouldAcceptWhenTicketCountIsAtBoundary() {
+
+        Integer accountId = 1;
+        TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 25);
+  
+        assertDoesNotThrow(() -> ticketPurchaseValidator.validate(accountId, adult));
+    }
+
+    @Test 
+    void shouldThrowWhenChildrenAndInfantsAreRequestedWithoutAdults() {
+
+        Integer accountId = 1;
+
+        TicketTypeRequest child = new TicketTypeRequest(Type.CHILD, 1);
+        TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 1);
+
+        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, child, infant));
+    }
+
+    @Test
+    void shouldThrowWhenOnlyChildrenAreRequested() {
+        
+        Integer accountId = 1;
+
+        TicketTypeRequest child = new TicketTypeRequest(Type.CHILD, 1);
+
+        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, child));
+    }
+
+    @Test
+    void shouldThrowWhenOnlyInfantsAreRequested() {
+        
+        Integer accountId = 1;
+
+        TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 1);
+
+        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, infant));
+    }
+
 }
