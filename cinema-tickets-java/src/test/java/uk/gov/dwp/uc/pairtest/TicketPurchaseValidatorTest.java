@@ -42,4 +42,12 @@ public class TicketPurchaseValidatorTest {
 
         assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult));
     }
+
+    @Test
+    void shouldThrowWhenTicketRequestsIsEmpty() {
+
+        Integer accountId = 1;
+
+        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId));
+    }
 }
