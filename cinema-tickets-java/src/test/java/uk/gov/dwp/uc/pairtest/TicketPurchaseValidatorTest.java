@@ -50,4 +50,12 @@ public class TicketPurchaseValidatorTest {
 
         assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId));
     }
+
+    @Test
+    void shouldThrowWhenTicketRequestsIsNull() {
+
+        Integer accountId = 1;
+
+        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, (TicketTypeRequest[]) null));
+    }
 }

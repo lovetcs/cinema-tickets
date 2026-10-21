@@ -11,7 +11,7 @@ public class TicketPurchaseValidator {
             throw new InvalidPurchaseException();
         }
 
-        if (ticketTypeRequests.length == 0) {
+        if (ticketTypeRequests == null || ticketTypeRequests.length == 0) {
             throw new InvalidPurchaseException();
         }
 
