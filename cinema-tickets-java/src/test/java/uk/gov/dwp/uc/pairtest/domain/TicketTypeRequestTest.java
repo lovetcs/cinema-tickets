@@ -8,9 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TicketTypeRequestTest {
 
-    
-
-
     @Test
     void getTicketTypeReturnsTheTypeProvided() {
 
@@ -22,7 +19,7 @@ class TicketTypeRequestTest {
 
     }
 
-    @Test 
+    @Test
     void getNoOfTicketsReturnsTheCountProvided() {
 
         TicketTypeRequest ticketTypeRequest = new TicketTypeRequest(Type.CHILD, 5);
