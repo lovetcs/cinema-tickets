@@ -82,7 +82,7 @@ public class TicketServiceImplIntegrationTest {
     }
 
     @Test
-    void shoudThrowWhenTicketsAreAboveMax() {
+    void throwsWhenTicketsAreAboveTheMaximum() {
 
         Long accountId = 1L;
 
