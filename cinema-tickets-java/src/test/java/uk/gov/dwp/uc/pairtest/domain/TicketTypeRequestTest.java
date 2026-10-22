@@ -35,4 +35,16 @@ class TicketTypeRequestTest {
         assertTrue(Type.ADULT.requiresSeat());
     }
 
+    @Test
+    void childCostsFifteenPoundsAndNeedsASeat() {
+        assertEquals(15, Type.CHILD.getPrice());
+        assertTrue(Type.CHILD.requiresSeat());
+    }
+
+    @Test
+    void infantIsFreeAndSitsOnALap() {
+        assertEquals(0, Type.INFANT.getPrice());
+        assertFalse(Type.INFANT.requiresSeat());
+    }
+
 }
