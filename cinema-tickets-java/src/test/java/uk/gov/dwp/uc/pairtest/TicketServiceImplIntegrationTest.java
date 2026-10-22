@@ -95,4 +95,18 @@ public class TicketServiceImplIntegrationTest {
 
         verifyNoInteractions(ticketPaymentService, seatReservationService);
     }
+
+     @Test
+    void throwsWhenNoAdultsInRequest() {
+
+        Long accountId = 1L;
+
+        TicketTypeRequest child = new TicketTypeRequest(Type.CHILD, 11);
+        TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 5);
+
+        assertThrows(InvalidPurchaseException.class,
+                () -> ticketServiceImpl.purchaseTickets(accountId, child, infant));
+
+        verifyNoInteractions(ticketPaymentService, seatReservationService);
+    }
 }
