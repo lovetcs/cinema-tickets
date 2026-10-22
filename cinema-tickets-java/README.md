@@ -6,7 +6,7 @@ The solution is written in Java and lives in `cinema-tickets-java`.
 
 ## Requirements
 
-- Java 21. (Mockito 5.14 does not support newer JDKs out of the box, so please run the tests on JDK 21).
+- Java 21
 - Maven 3.x
 
 ## How to run the tests
@@ -18,24 +18,23 @@ mvn test
 
 ## Design
 
-All collaborators are passed in through the constructor, so each piece can be tested on its own.
+All collaborators are passed in through the constructor and are depended on as interfaces, so each piece can be tested on its own.
 
 - **`TicketServiceImpl`**: coordinates a purchase: validate, calculate the price and seats, take payment, then reserve seats. It contains no business rules itself.
-- **`TicketPurchaseValidator`**: rejects invalid purchases by throwing `InvalidPurchaseException`. It has no side effects.
-- **`TicketCalculator`**: works out the total price and the number of seats. It does no validation.
+- **`TicketPurchaseValidator`** (interface) / **`TicketPurchaseValidatorImpl`**: rejects invalid purchases by throwing `InvalidPurchaseException`. It has no side effects.
+- **`TicketCalculator`** (interface) / **`TicketCalculatorImpl`**: works out the total price and the number of seats. It does no validation.
 - **`TicketTypeRequest`**: immutable pair of ticket type and number of tickets.
-
-Prices: Infant £0, Child £15, Adult £25. Infants do not need a seat.
+- **`TicketTypeRequest.Type`**: each ticket type holds its own price and whether it needs a seat (Adult £25, seat; Child £15, seat; Infant £0, no seat). Adding a new type means adding one enum constant, so a type can't be added without a price.
 
 ## Testing approach
 
-The solution was developed test-first (TDD), in small steps.
+The logic was developed test-first (TDD), in small steps. The ticket type rules and the interfaces were later refactored with the existing tests.
 
 - **Unit tests:** each class is tested on its own.
-  - **Validator:** one test per rule, including the boundary at 25 tickets.
+  - **Validator:** one test per rule, including the boundary at 25 tickets and integer overflow.
   - **Calculator:** each ticket type, and mixed purchases, for both price and seats.
-  - **Service:** the validator, calculator, payment service and seat service are all mocked (Mockito). These tests check that the service calls each of them correctly, and that nothing is paid or reserved when a request is invalid.
-
+  - **Ticket types:** the price and seat requirement of each type.
+  - **Service:** the validator and calculator interfaces and the two external services are mocked (Mockito). These tests check that the service calls each of them correctly, and that nothing is paid or reserved when a request is invalid.
 - **Integration-style tests:** these use the real validator and calculator, and mock only the two external services (`TicketPaymentService` and `SeatReservationService`). They check complete purchase scenarios with real figures.
 
 ## Assumptions
@@ -50,8 +49,10 @@ The brief left some rules open. These are the choices made:
 - **Multiple requests of the same type:** allowed, and added together.
 - **Order of payment and seat reservation:** payment is requested first, then seats. Both happen only if the request is valid.
 - **`TicketTypeRequest` immutability:** it is a final class with final fields and no setters.
+- **Failure after payment:** if payment succeeds but seat reservation fails, nothing is rolled back. Both external services are assumed to always succeed.
 
 ## Notes
 
 - Invalid requests are rejected before any payment or reservation call is made.
 - The `thirdparty` packages and the `TicketService` interface were left unchanged.
+- `TicketServiceImpl` depends only on interfaces, with real implementations passed in.
