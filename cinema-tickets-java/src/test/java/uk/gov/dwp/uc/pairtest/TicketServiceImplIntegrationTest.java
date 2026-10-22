@@ -1,6 +1,8 @@
 package uk.gov.dwp.uc.pairtest;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type;
+import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 import thirdparty.paymentgateway.TicketPaymentService;
 import thirdparty.seatbooking.SeatReservationService;
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
@@ -76,5 +79,20 @@ public class TicketServiceImplIntegrationTest {
 
         verify(ticketPaymentService).makePayment(accountId, 400);
         verify(seatReservationService).reserveSeat(accountId, 20);
+    }
+
+    @Test
+    void shoudThrowWhenTicketsAreAboveMax() {
+
+        Long accountId = 1L;
+
+        TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 10);
+        TicketTypeRequest child = new TicketTypeRequest(Type.CHILD, 11);
+        TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 5);
+
+        assertThrows(InvalidPurchaseException.class,
+                () -> ticketServiceImpl.purchaseTickets(accountId, adult, child, infant));
+
+        verifyNoInteractions(ticketPaymentService, seatReservationService);
     }
 }
