@@ -36,6 +36,7 @@ public class TicketServiceImplTest {
     private final TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 5);
     private final TicketTypeRequest child = new TicketTypeRequest(Type.CHILD, 2);
     private final TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 1);
+    private final TicketTypeRequest infantInvalid = new TicketTypeRequest(Type.INFANT, 6);
 
     @BeforeEach
     void setUp() {
@@ -73,34 +74,26 @@ public class TicketServiceImplTest {
     }
 
     @Test
-    void shouldThrowWhenRequesttIsInvalid() {
-
-        TicketTypeRequest infantInvalid = new TicketTypeRequest(Type.INFANT, 5);
-        TicketTypeRequest childInvalid = new TicketTypeRequest(Type.CHILD, 2);
-        TicketTypeRequest adultInvalid = new TicketTypeRequest(Type.ADULT, 0);
+    void shouldThrowWhenRequestIsInvalid() {
 
         doThrow(new InvalidPurchaseException())
                 .when(ticketPurchaseValidator)
-                .validate(accountId, adultInvalid, childInvalid, infantInvalid);
+                .validate(accountId, adult, child, infantInvalid);
 
         assertThrows(InvalidPurchaseException.class,
-                () -> ticketServiceImpl.purchaseTickets(accountId, adultInvalid, childInvalid, infantInvalid));
+                () -> ticketServiceImpl.purchaseTickets(accountId, adult, child, infantInvalid));
 
     }
 
     @Test
     void doesNotPayOrReserveSeatsWhenRequestIsInvalid() {
 
-        TicketTypeRequest infantInvalid = new TicketTypeRequest(Type.INFANT, 5);
-        TicketTypeRequest childInvalid = new TicketTypeRequest(Type.CHILD, 2);
-        TicketTypeRequest adultInvalid = new TicketTypeRequest(Type.ADULT, 0);
-
         doThrow(new InvalidPurchaseException())
                 .when(ticketPurchaseValidator)
-                .validate(accountId, adultInvalid, childInvalid, infantInvalid);
+                .validate(accountId, adult, child, infantInvalid);
 
         assertThrows(InvalidPurchaseException.class,
-                () -> ticketServiceImpl.purchaseTickets(accountId, adultInvalid, childInvalid, infantInvalid));
+                () -> ticketServiceImpl.purchaseTickets(accountId, adult, child, infantInvalid));
 
         verifyNoInteractions(ticketPaymentService, seatReservationService);
     }
