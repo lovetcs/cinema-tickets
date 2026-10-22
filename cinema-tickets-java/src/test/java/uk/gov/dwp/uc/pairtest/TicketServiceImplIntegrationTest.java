@@ -32,8 +32,8 @@ public class TicketServiceImplIntegrationTest {
     @BeforeEach
     void setUp() {
 
-        TicketCalculator ticketCalculator = new TicketCalculator();
-        TicketPurchaseValidator ticketPurchaseValidator = new TicketPurchaseValidator();
+        TicketCalculatorImpl ticketCalculator = new TicketCalculatorImpl();
+        TicketPurchaseValidatorImpl ticketPurchaseValidator = new TicketPurchaseValidatorImpl();
 
         ticketServiceImpl = new TicketServiceImpl(ticketPurchaseValidator, ticketCalculator, ticketPaymentService,
                 seatReservationService);

@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TicketCalculatorTest {
 
-    private final TicketCalculator ticketCalculator = new TicketCalculator();
+    private final TicketCalculatorImpl ticketCalculator = new TicketCalculatorImpl();
 
     //  Price Calculation Tests
     @Test

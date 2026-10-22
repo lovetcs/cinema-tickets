@@ -24,9 +24,9 @@ public class TicketServiceImplTest {
     @Mock
     private TicketPaymentService ticketPaymentService;
     @Mock
-    private TicketCalculator ticketCalculator;
+    private TicketCalculatorImpl ticketCalculator;
     @Mock
-    private TicketPurchaseValidator ticketPurchaseValidator;
+    private TicketPurchaseValidatorImpl ticketPurchaseValidator;
     @Mock
     private SeatReservationService seatReservationService;
 

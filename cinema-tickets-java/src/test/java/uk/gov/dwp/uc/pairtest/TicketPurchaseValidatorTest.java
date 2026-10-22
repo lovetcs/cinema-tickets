@@ -14,7 +14,7 @@ import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException.InvalidPurchase
 
 public class TicketPurchaseValidatorTest {
 
-    private final TicketPurchaseValidator ticketPurchaseValidator = new TicketPurchaseValidator();
+    private final TicketPurchaseValidatorImpl ticketPurchaseValidator = new TicketPurchaseValidatorImpl();
 
     private void assertRejectedWith(InvalidPurchaseReason expected, Executable action) {
         InvalidPurchaseException exception = assertThrows(InvalidPurchaseException.class, action);
