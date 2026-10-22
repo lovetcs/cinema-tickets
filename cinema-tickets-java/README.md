@@ -28,7 +28,7 @@ All collaborators are passed in through the constructor and are depended on as i
 
 ## Testing approach
 
-The logic was developed test-first (TDD), in small steps. The ticket type rules and the interfaces were later refactored with the existing tests.
+The logic was developed largely test-first (TDD), in small steps.
 
 - **Unit tests:** each class is tested on its own.
   - **Validator:** one test per rule, including the boundary at 25 tickets and integer overflow.
