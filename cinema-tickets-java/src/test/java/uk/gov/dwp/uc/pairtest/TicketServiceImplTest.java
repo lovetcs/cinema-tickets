@@ -1,5 +1,7 @@
 package uk.gov.dwp.uc.pairtest;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -9,7 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type;
-
+import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 import thirdparty.paymentgateway.TicketPaymentService;
 import thirdparty.seatbooking.SeatReservationService;
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
@@ -34,7 +36,6 @@ public class TicketServiceImplTest {
     private final TicketTypeRequest child = new TicketTypeRequest(Type.CHILD, 2);
     private final TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 1);
 
-
     @BeforeEach
     void setUp() {
         ticketServiceImpl = new TicketServiceImpl(ticketPurchaseValidator, ticketCalculator, ticketPaymentService,
@@ -50,9 +51,9 @@ public class TicketServiceImplTest {
         verify(ticketPurchaseValidator).validate(accountId, adult, child, infant);
     }
 
-    @Test 
+    @Test
     void makesPaymentForTheCalculatedPrice() {
-        
+
         when(ticketCalculator.calculateTotalPrice(adult, child, infant)).thenReturn(100);
 
         ticketServiceImpl.purchaseTickets(accountId, adult, child, infant);
@@ -60,15 +61,30 @@ public class TicketServiceImplTest {
         verify(ticketPaymentService).makePayment(accountId, 100);
     }
 
-
-    @Test 
+    @Test
     void reservesSeatsForTheCalculatedSeatCount() {
-        
+
         when(ticketCalculator.calculateTotalSeats(adult, child, infant)).thenReturn(10);
 
         ticketServiceImpl.purchaseTickets(accountId, adult, child, infant);
 
         verify(seatReservationService).reserveSeat(accountId, 10);
+    }
+
+    @Test 
+    void shouldThrowWhenRequesttIsInvalid() {
+
+    TicketTypeRequest infantInvalid = new TicketTypeRequest(Type.INFANT, 5);
+    TicketTypeRequest childInvalid = new TicketTypeRequest(Type.CHILD, 2);
+    TicketTypeRequest adultInvalid = new TicketTypeRequest(Type.ADULT, 0);
+
+        doThrow(new InvalidPurchaseException())
+                .when(ticketPurchaseValidator)
+                .validate(accountId, adultInvalid, childInvalid, infantInvalid);
+
+        assertThrows(InvalidPurchaseException.class,
+                () -> ticketServiceImpl.purchaseTickets(accountId, adultInvalid, childInvalid, infantInvalid));
+
     }
 
 }
