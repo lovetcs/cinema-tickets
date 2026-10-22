@@ -1,8 +1,10 @@
 package uk.gov.dwp.uc.pairtest;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -109,4 +111,5 @@ public class TicketServiceImplIntegrationTest {
 
         verifyNoInteractions(ticketPaymentService, seatReservationService);
     }
+
 }
