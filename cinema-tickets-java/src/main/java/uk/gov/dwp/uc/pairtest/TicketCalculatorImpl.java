@@ -3,9 +3,9 @@ package uk.gov.dwp.uc.pairtest;
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type;
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
 
-public class TicketCalculatorImpl implements TicketCalculator{
+public class TicketCalculatorImpl implements TicketCalculator {
 
-    @Override 
+    @Override
     public int calculateTotalPrice(TicketTypeRequest... ticketTypeRequests) {
 
         int totalPrice = 0;
@@ -21,7 +21,7 @@ public class TicketCalculatorImpl implements TicketCalculator{
         return totalPrice;
     }
 
-    @Override 
+    @Override
     public int calculateTotalSeats(TicketTypeRequest... ticketTypeRequests) {
         int totalSeats = 0;
 
