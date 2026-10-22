@@ -74,7 +74,6 @@ public class TicketServiceImplTest {
         verify(seatReservationService).reserveSeat(accountId, 10);
     }
 
-   
     @Test
     void doesNotPayOrReserveSeatsWhenRequestIsInvalid() {
 
@@ -86,6 +85,22 @@ public class TicketServiceImplTest {
                 () -> ticketServiceImpl.purchaseTickets(accountId, adult, child, infantInvalid));
 
         verifyNoInteractions(ticketPaymentService, seatReservationService);
+    }
+
+    @Test
+    void doesNotReserveSeatsWhenPaymentFails() {
+
+        doThrow(new RuntimeException("Payment failed"))
+                .when(ticketPaymentService)
+                .makePayment(accountId, 100);
+
+        when(ticketCalculator.calculateTotalPrice(adult, child, infant)).thenReturn(100);
+
+        assertThrows(RuntimeException.class,
+                () -> ticketServiceImpl.purchaseTickets(accountId, adult, child, infant));
+
+        verify(ticketPaymentService).makePayment(accountId, 100);
+        verifyNoInteractions(seatReservationService);
     }
 
 }
