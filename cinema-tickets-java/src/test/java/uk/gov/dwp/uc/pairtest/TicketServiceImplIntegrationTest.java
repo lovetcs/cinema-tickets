@@ -1,19 +1,21 @@
 package uk.gov.dwp.uc.pairtest;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doThrow;
+
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.function.Executable;
 
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
+import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException.InvalidPurchaseReason;
 import thirdparty.paymentgateway.TicketPaymentService;
 import thirdparty.seatbooking.SeatReservationService;
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
@@ -37,6 +39,11 @@ public class TicketServiceImplIntegrationTest {
 
         ticketServiceImpl = new TicketServiceImpl(ticketPurchaseValidator, ticketCalculator, ticketPaymentService,
                 seatReservationService);
+    }
+
+    private void assertRejectedWith(InvalidPurchaseReason expected, Executable action) {
+        InvalidPurchaseException exception = assertThrows(InvalidPurchaseException.class, action);
+        assertEquals(expected, exception.getReason());
     }
 
     @Test
@@ -92,9 +99,8 @@ public class TicketServiceImplIntegrationTest {
         TicketTypeRequest child = new TicketTypeRequest(Type.CHILD, 11);
         TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 5);
 
-        assertThrows(InvalidPurchaseException.class,
+        assertRejectedWith(InvalidPurchaseReason.TOO_MANY_TICKETS,
                 () -> ticketServiceImpl.purchaseTickets(accountId, adult, child, infant));
-
         verifyNoInteractions(ticketPaymentService, seatReservationService);
     }
 
@@ -106,7 +112,7 @@ public class TicketServiceImplIntegrationTest {
         TicketTypeRequest child = new TicketTypeRequest(Type.CHILD, 11);
         TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 5);
 
-        assertThrows(InvalidPurchaseException.class,
+        assertRejectedWith(InvalidPurchaseReason.ADULT_REQUIRED,
                 () -> ticketServiceImpl.purchaseTickets(accountId, child, infant));
 
         verifyNoInteractions(ticketPaymentService, seatReservationService);
