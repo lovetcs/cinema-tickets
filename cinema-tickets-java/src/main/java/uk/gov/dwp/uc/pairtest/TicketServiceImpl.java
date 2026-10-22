@@ -10,27 +10,30 @@ public class TicketServiceImpl implements TicketService {
      * Should only have private methods other than the one below.
      */
 
-    
     private final TicketPurchaseValidator ticketPurchaseValidator;
     private final TicketCalculator ticketCalculator;
     private final TicketPaymentService ticketPaymentService;
     private final SeatReservationService seatReservationService;
 
+    public TicketServiceImpl(TicketPurchaseValidator ticketPurchaseValidator, TicketCalculator ticketCalculator,
+            TicketPaymentService ticketPaymentService, SeatReservationService seatReservationService) {
 
-    public TicketServiceImpl(TicketPurchaseValidator ticketPurchaseValidator, TicketCalculator ticketCalculator, 
-        TicketPaymentService ticketPaymentService, SeatReservationService seatReservationService) {
-
-            this.ticketPurchaseValidator = ticketPurchaseValidator;
-            this.ticketCalculator = ticketCalculator;
-            this.ticketPaymentService = ticketPaymentService;
-            this.seatReservationService = seatReservationService;
+        this.ticketPurchaseValidator = ticketPurchaseValidator;
+        this.ticketCalculator = ticketCalculator;
+        this.ticketPaymentService = ticketPaymentService;
+        this.seatReservationService = seatReservationService;
     }
 
     @Override
-    public void purchaseTickets(Long accountId, TicketTypeRequest... ticketTypeRequests) throws InvalidPurchaseException {
-        
+    public void purchaseTickets(Long accountId, TicketTypeRequest... ticketTypeRequests)
+            throws InvalidPurchaseException {
+
         this.ticketPurchaseValidator.validate(accountId, ticketTypeRequests);
-        
+
+        int totalCalculatedPaymentAmount = this.ticketCalculator.calculateTotalPrice(ticketTypeRequests);
+
+        this.ticketPaymentService.makePayment(accountId, totalCalculatedPaymentAmount);
+
     }
 
 }
