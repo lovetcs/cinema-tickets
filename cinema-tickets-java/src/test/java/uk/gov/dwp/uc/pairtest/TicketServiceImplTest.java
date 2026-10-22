@@ -3,6 +3,7 @@ package uk.gov.dwp.uc.pairtest;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -71,12 +72,12 @@ public class TicketServiceImplTest {
         verify(seatReservationService).reserveSeat(accountId, 10);
     }
 
-    @Test 
+    @Test
     void shouldThrowWhenRequesttIsInvalid() {
 
-    TicketTypeRequest infantInvalid = new TicketTypeRequest(Type.INFANT, 5);
-    TicketTypeRequest childInvalid = new TicketTypeRequest(Type.CHILD, 2);
-    TicketTypeRequest adultInvalid = new TicketTypeRequest(Type.ADULT, 0);
+        TicketTypeRequest infantInvalid = new TicketTypeRequest(Type.INFANT, 5);
+        TicketTypeRequest childInvalid = new TicketTypeRequest(Type.CHILD, 2);
+        TicketTypeRequest adultInvalid = new TicketTypeRequest(Type.ADULT, 0);
 
         doThrow(new InvalidPurchaseException())
                 .when(ticketPurchaseValidator)
@@ -85,6 +86,23 @@ public class TicketServiceImplTest {
         assertThrows(InvalidPurchaseException.class,
                 () -> ticketServiceImpl.purchaseTickets(accountId, adultInvalid, childInvalid, infantInvalid));
 
+    }
+
+    @Test
+    void doesNotPayOrReserveSeatsWhenRequestIsInvalid() {
+
+        TicketTypeRequest infantInvalid = new TicketTypeRequest(Type.INFANT, 5);
+        TicketTypeRequest childInvalid = new TicketTypeRequest(Type.CHILD, 2);
+        TicketTypeRequest adultInvalid = new TicketTypeRequest(Type.ADULT, 0);
+
+        doThrow(new InvalidPurchaseException())
+                .when(ticketPurchaseValidator)
+                .validate(accountId, adultInvalid, childInvalid, infantInvalid);
+
+        assertThrows(InvalidPurchaseException.class,
+                () -> ticketServiceImpl.purchaseTickets(accountId, adultInvalid, childInvalid, infantInvalid));
+
+        verifyNoInteractions(ticketPaymentService, seatReservationService);
     }
 
 }
