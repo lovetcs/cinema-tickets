@@ -35,9 +35,18 @@ public class TicketPurchaseValidatorTest {
     }
 
     @Test
-    void shouldThrowWhenAccountIdIsEqualsOrLessThanZero() {
+    void shouldThrowWhenAccountIdIsZero() {
 
         Long accountId = 0L;
+        TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
+
+        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult));
+    }
+
+    @Test
+    void shouldThrowWhenAccountIdIsLessThanZero() {
+
+        Long accountId = -1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
 
         assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult));
@@ -146,6 +155,40 @@ public class TicketPurchaseValidatorTest {
         TicketTypeRequest noType = new TicketTypeRequest(null, 1);
 
         assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult, noType));
+    }
+
+    @Test
+    void shouldThrowWhenARequestInTheArrayIsNull() {
+
+        Long accountId = 1L;
+        TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
+
+        assertThrows(InvalidPurchaseException.class,
+                () -> ticketPurchaseValidator.validate(accountId, adult, null));
+    }
+
+    @Test
+    void shouldThrowWhenTotalAcrossSeparateRequestsIsOverLimit() {
+
+        Long accountId = 1L;
+        TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 13);
+        TicketTypeRequest child = new TicketTypeRequest(Type.CHILD, 13);
+
+        assertThrows(InvalidPurchaseException.class,
+                () -> ticketPurchaseValidator.validate(accountId, adult, child));
+    }
+
+    @Test
+    void shouldCountInfantsTowardsTheMaximumNumberOfTickets() {
+
+        Long accountId = 1L;
+        TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 13);
+        TicketTypeRequest infantsOverLimit = new TicketTypeRequest(Type.INFANT, 13);
+        TicketTypeRequest infantsAtLimit = new TicketTypeRequest(Type.INFANT, 12);
+
+        assertThrows(InvalidPurchaseException.class,
+                () -> ticketPurchaseValidator.validate(accountId, adult, infantsOverLimit));
+        assertDoesNotThrow(() -> ticketPurchaseValidator.validate(accountId, adult, infantsAtLimit));
     }
 
 }
