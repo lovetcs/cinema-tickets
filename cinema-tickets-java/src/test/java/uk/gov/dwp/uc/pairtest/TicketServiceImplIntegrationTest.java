@@ -62,4 +62,19 @@ public class TicketServiceImplIntegrationTest {
         verify(ticketPaymentService).makePayment(accountId, 25);
         verify(seatReservationService).reserveSeat(accountId, 1);
     }
+
+    @Test
+    void paysAndReservesSeatsForExactly25Tickets() {
+
+        Long accountId = 1L;
+
+        TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 10);
+        TicketTypeRequest child = new TicketTypeRequest(Type.CHILD, 10);
+        TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 5);
+
+        ticketServiceImpl.purchaseTickets(accountId, adult, child, infant);
+
+        verify(ticketPaymentService).makePayment(accountId, 400);
+        verify(seatReservationService).reserveSeat(accountId, 20);
+    }
 }
