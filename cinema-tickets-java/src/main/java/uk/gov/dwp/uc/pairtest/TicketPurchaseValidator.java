@@ -3,6 +3,7 @@ package uk.gov.dwp.uc.pairtest;
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
+import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException.InvalidPurchaseReason;
 
 public class TicketPurchaseValidator {
 
@@ -21,28 +22,24 @@ public class TicketPurchaseValidator {
     private void validateAccountId(Long accountId) {
 
         if (accountId == null || accountId <= 0) {
-            throw new InvalidPurchaseException();
+            throw new InvalidPurchaseException(InvalidPurchaseReason.INVALID_ACCOUNT_ID);
         }
     }
 
     private void validateRequests(TicketTypeRequest... ticketTypeRequests) {
 
         if (ticketTypeRequests == null || ticketTypeRequests.length == 0) {
-            throw new InvalidPurchaseException();
+            throw new InvalidPurchaseException(InvalidPurchaseReason.NO_TICKETS_REQUESTED);
         }
 
         for (TicketTypeRequest request : ticketTypeRequests) {
 
-            if (request == null) {
-                throw new InvalidPurchaseException();
-            }
-
-            if (request.getTicketType() == null) {
-                throw new InvalidPurchaseException();
+            if (request == null || request.getTicketType() == null) {
+                throw new InvalidPurchaseException(InvalidPurchaseReason.INVALID_TICKET_REQUEST);
             }
 
             if (request.getNoOfTickets() <= 0) {
-                throw new InvalidPurchaseException();
+                throw new InvalidPurchaseException(InvalidPurchaseReason.INVALID_TICKET_COUNT);
             }
         }
 
@@ -59,13 +56,13 @@ public class TicketPurchaseValidator {
             int count = request.getNoOfTickets();
 
             if (count > MAX_TICKETS) {
-                throw new InvalidPurchaseException();
+                throw new InvalidPurchaseException(InvalidPurchaseReason.TOO_MANY_TICKETS);
             }
 
             totalTickets += count;
 
             if (totalTickets > MAX_TICKETS) {
-                throw new InvalidPurchaseException();
+                throw new InvalidPurchaseException(InvalidPurchaseReason.TOO_MANY_TICKETS);
             }
 
             Type type = request.getTicketType();
@@ -79,11 +76,11 @@ public class TicketPurchaseValidator {
         }
 
         if (adultCount == 0) {
-            throw new InvalidPurchaseException();
+            throw new InvalidPurchaseException(InvalidPurchaseReason.ADULT_REQUIRED);
         }
 
         if (infantCount > adultCount) {
-            throw new InvalidPurchaseException();
+            throw new InvalidPurchaseException(InvalidPurchaseReason.INFANTS_EXCEED_ADULTS);
         }
     }
 

@@ -6,7 +6,7 @@ The solution is written in Java and lives in `cinema-tickets-java`.
 
 ## Requirements
 
-- Java 21 (Java 21. Mockito 5.14 does not support newer JDKs out of the box, so please run the tests on JDK 21.)
+- Java 21. (Mockito 5.14 does not support newer JDKs out of the box, so please run the tests on JDK 21).
 - Maven 3.x
 
 ## How to run the tests

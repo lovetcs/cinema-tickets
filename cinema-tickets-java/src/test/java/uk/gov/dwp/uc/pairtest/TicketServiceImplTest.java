@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
+import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException.InvalidPurchaseReason;
 import thirdparty.paymentgateway.TicketPaymentService;
 import thirdparty.seatbooking.SeatReservationService;
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
@@ -73,22 +74,11 @@ public class TicketServiceImplTest {
         verify(seatReservationService).reserveSeat(accountId, 10);
     }
 
-    @Test
-    void shouldThrowWhenRequestIsInvalid() {
-
-        doThrow(new InvalidPurchaseException())
-                .when(ticketPurchaseValidator)
-                .validate(accountId, adult, child, infantInvalid);
-
-        assertThrows(InvalidPurchaseException.class,
-                () -> ticketServiceImpl.purchaseTickets(accountId, adult, child, infantInvalid));
-
-    }
-
+   
     @Test
     void doesNotPayOrReserveSeatsWhenRequestIsInvalid() {
 
-        doThrow(new InvalidPurchaseException())
+        doThrow(new InvalidPurchaseException(InvalidPurchaseReason.INFANTS_EXCEED_ADULTS))
                 .when(ticketPurchaseValidator)
                 .validate(accountId, adult, child, infantInvalid);
 

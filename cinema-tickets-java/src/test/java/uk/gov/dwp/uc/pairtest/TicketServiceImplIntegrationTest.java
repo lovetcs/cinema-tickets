@@ -96,7 +96,7 @@ public class TicketServiceImplIntegrationTest {
         verifyNoInteractions(ticketPaymentService, seatReservationService);
     }
 
-     @Test
+    @Test
     void throwsWhenNoAdultsInRequest() {
 
         Long accountId = 1L;

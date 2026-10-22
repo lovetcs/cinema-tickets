@@ -1,17 +1,25 @@
 package uk.gov.dwp.uc.pairtest;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
+import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException.InvalidPurchaseReason;
 
 public class TicketPurchaseValidatorTest {
 
     private final TicketPurchaseValidator ticketPurchaseValidator = new TicketPurchaseValidator();
+
+    private void assertRejectedWith(InvalidPurchaseReason expected, Executable action) {
+        InvalidPurchaseException exception = assertThrows(InvalidPurchaseException.class, action);
+        assertEquals(expected, exception.getReason());
+    }
 
     @Test
     void shouldAcceptValidRequest() {
@@ -31,7 +39,8 @@ public class TicketPurchaseValidatorTest {
         Long accountId = null;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
 
-        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult));
+        assertRejectedWith(InvalidPurchaseReason.INVALID_ACCOUNT_ID,
+                () -> ticketPurchaseValidator.validate(accountId, adult));
     }
 
     @Test
@@ -40,7 +49,8 @@ public class TicketPurchaseValidatorTest {
         Long accountId = 0L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
 
-        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult));
+        assertRejectedWith(InvalidPurchaseReason.INVALID_ACCOUNT_ID,
+                () -> ticketPurchaseValidator.validate(accountId, adult));
     }
 
     @Test
@@ -49,7 +59,8 @@ public class TicketPurchaseValidatorTest {
         Long accountId = -1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
 
-        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult));
+        assertRejectedWith(InvalidPurchaseReason.INVALID_ACCOUNT_ID,
+                () -> ticketPurchaseValidator.validate(accountId, adult));
     }
 
     @Test
@@ -57,7 +68,8 @@ public class TicketPurchaseValidatorTest {
 
         Long accountId = 1L;
 
-        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId));
+        assertRejectedWith(InvalidPurchaseReason.NO_TICKETS_REQUESTED,
+                () -> ticketPurchaseValidator.validate(accountId));
     }
 
     @Test
@@ -65,7 +77,7 @@ public class TicketPurchaseValidatorTest {
 
         Long accountId = 1L;
 
-        assertThrows(InvalidPurchaseException.class,
+        assertRejectedWith(InvalidPurchaseReason.NO_TICKETS_REQUESTED,
                 () -> ticketPurchaseValidator.validate(accountId, (TicketTypeRequest[]) null));
     }
 
@@ -75,7 +87,8 @@ public class TicketPurchaseValidatorTest {
         Long accountId = 1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 0);
 
-        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult));
+        assertRejectedWith(InvalidPurchaseReason.INVALID_TICKET_COUNT,
+                () -> ticketPurchaseValidator.validate(accountId, adult));
     }
 
     @Test
@@ -84,7 +97,8 @@ public class TicketPurchaseValidatorTest {
         Long accountId = 1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, -1);
 
-        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult));
+        assertRejectedWith(InvalidPurchaseReason.INVALID_TICKET_COUNT,
+                () -> ticketPurchaseValidator.validate(accountId, adult));
     }
 
     @Test
@@ -93,7 +107,8 @@ public class TicketPurchaseValidatorTest {
         Long accountId = 1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 26);
 
-        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult));
+        assertRejectedWith(InvalidPurchaseReason.TOO_MANY_TICKETS,
+                () -> ticketPurchaseValidator.validate(accountId, adult));
     }
 
     @Test
@@ -113,7 +128,9 @@ public class TicketPurchaseValidatorTest {
         TicketTypeRequest child = new TicketTypeRequest(Type.CHILD, 1);
         TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 1);
 
-        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, child, infant));
+        assertRejectedWith(InvalidPurchaseReason.ADULT_REQUIRED,
+                () -> ticketPurchaseValidator.validate(accountId, child, infant));
+
     }
 
     @Test
@@ -123,7 +140,8 @@ public class TicketPurchaseValidatorTest {
 
         TicketTypeRequest child = new TicketTypeRequest(Type.CHILD, 1);
 
-        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, child));
+        assertRejectedWith(InvalidPurchaseReason.ADULT_REQUIRED,
+                () -> ticketPurchaseValidator.validate(accountId, child));
     }
 
     @Test
@@ -133,7 +151,8 @@ public class TicketPurchaseValidatorTest {
 
         TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 1);
 
-        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, infant));
+        assertRejectedWith(InvalidPurchaseReason.ADULT_REQUIRED,
+                () -> ticketPurchaseValidator.validate(accountId, infant));
     }
 
     @Test
@@ -144,7 +163,9 @@ public class TicketPurchaseValidatorTest {
         TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 2);
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 1);
 
-        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult, infant));
+        assertRejectedWith(InvalidPurchaseReason.INFANTS_EXCEED_ADULTS,
+                () -> ticketPurchaseValidator.validate(accountId, adult, infant));
+
     }
 
     @Test
@@ -154,7 +175,9 @@ public class TicketPurchaseValidatorTest {
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
         TicketTypeRequest noType = new TicketTypeRequest(null, 1);
 
-        assertThrows(InvalidPurchaseException.class, () -> ticketPurchaseValidator.validate(accountId, adult, noType));
+        assertRejectedWith(InvalidPurchaseReason.INVALID_TICKET_REQUEST,
+                () -> ticketPurchaseValidator.validate(accountId, adult, noType));
+
     }
 
     @Test
@@ -163,8 +186,9 @@ public class TicketPurchaseValidatorTest {
         Long accountId = 1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
 
-        assertThrows(InvalidPurchaseException.class,
+        assertRejectedWith(InvalidPurchaseReason.INVALID_TICKET_REQUEST,
                 () -> ticketPurchaseValidator.validate(accountId, adult, null));
+
     }
 
     @Test
@@ -174,7 +198,7 @@ public class TicketPurchaseValidatorTest {
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 13);
         TicketTypeRequest child = new TicketTypeRequest(Type.CHILD, 13);
 
-        assertThrows(InvalidPurchaseException.class,
+        assertRejectedWith(InvalidPurchaseReason.TOO_MANY_TICKETS,
                 () -> ticketPurchaseValidator.validate(accountId, adult, child));
     }
 
@@ -186,8 +210,9 @@ public class TicketPurchaseValidatorTest {
         TicketTypeRequest infantsOverLimit = new TicketTypeRequest(Type.INFANT, 13);
         TicketTypeRequest infantsAtLimit = new TicketTypeRequest(Type.INFANT, 12);
 
-        assertThrows(InvalidPurchaseException.class,
+        assertRejectedWith(InvalidPurchaseReason.TOO_MANY_TICKETS,
                 () -> ticketPurchaseValidator.validate(accountId, adult, infantsOverLimit));
+
         assertDoesNotThrow(() -> ticketPurchaseValidator.validate(accountId, adult, infantsAtLimit));
     }
 
@@ -198,8 +223,18 @@ public class TicketPurchaseValidatorTest {
         TicketTypeRequest child = new TicketTypeRequest(Type.CHILD, Integer.MAX_VALUE);
         TicketTypeRequest moreChildren = new TicketTypeRequest(Type.CHILD, 5);
 
-        assertThrows(InvalidPurchaseException.class,
+        assertRejectedWith(InvalidPurchaseReason.TOO_MANY_TICKETS,
                 () -> ticketPurchaseValidator.validate(accountId, adult, child, moreChildren));
+
+    }
+
+    @Test
+    void shouldAcceptInfantsEqualToAdults() {
+        Long accountId = 1L;
+        TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
+        TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 2);
+
+        assertDoesNotThrow(() -> ticketPurchaseValidator.validate(accountId, adult, infant));
     }
 
 }
