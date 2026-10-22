@@ -30,9 +30,11 @@ public class TicketServiceImpl implements TicketService {
 
         this.ticketPurchaseValidator.validate(accountId, ticketTypeRequests);
 
-        int totalCalculatedPaymentAmount = this.ticketCalculator.calculateTotalPrice(ticketTypeRequests);
+        int totalAmount = this.ticketCalculator.calculateTotalPrice(ticketTypeRequests);
+        int totalSeats = this.ticketCalculator.calculateTotalSeats(ticketTypeRequests);
 
-        this.ticketPaymentService.makePayment(accountId, totalCalculatedPaymentAmount);
+        this.ticketPaymentService.makePayment(accountId, totalAmount);
+        this.seatReservationService.reserveSeat(accountId, totalSeats);
 
     }
 

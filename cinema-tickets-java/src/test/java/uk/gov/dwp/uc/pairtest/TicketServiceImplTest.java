@@ -58,7 +58,17 @@ public class TicketServiceImplTest {
         ticketServiceImpl.purchaseTickets(accountId, adult, child, infant);
 
         verify(ticketPaymentService).makePayment(accountId, 100);
+    }
+
+
+    @Test 
+    void reservesSeatsForTheCalculatedSeatCount() {
         
+        when(ticketCalculator.calculateTotalSeats(adult, child, infant)).thenReturn(10);
+
+        ticketServiceImpl.purchaseTickets(accountId, adult, child, infant);
+
+        verify(seatReservationService).reserveSeat(accountId, 10);
     }
 
 }
