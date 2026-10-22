@@ -52,13 +52,21 @@ public class TicketPurchaseValidator {
 
         int adultCount = 0;
         int infantCount = 0;
-        int totalTickets = 0;
+        long totalTickets = 0L;
 
         for (TicketTypeRequest request : ticketTypeRequests) {
 
             int count = request.getNoOfTickets();
 
+            if (count > MAX_TICKETS) {
+                throw new InvalidPurchaseException();
+            }
+
             totalTickets += count;
+
+            if (totalTickets > MAX_TICKETS) {
+                throw new InvalidPurchaseException();
+            }
 
             Type type = request.getTicketType();
 
@@ -68,10 +76,6 @@ public class TicketPurchaseValidator {
                 infantCount += count;
             }
 
-        }
-
-        if (totalTickets > MAX_TICKETS) {
-            throw new InvalidPurchaseException();
         }
 
         if (adultCount == 0) {
