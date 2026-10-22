@@ -9,6 +9,7 @@ public class TicketPurchaseValidatorImpl implements TicketPurchaseValidator {
 
     private static final int MAX_TICKETS = 25;
 
+    @Override 
     public void validate(Long accountId, TicketTypeRequest... ticketTypeRequests) {
 
         validateAccountId(accountId);
