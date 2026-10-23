@@ -5,8 +5,25 @@ import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException.InvalidPurchaseReason;
 
+/**
+ * Default {@link TicketPurchaseValidator}. Rejects a purchase with an
+ * {@link InvalidPurchaseException} carrying the first rule that fails.
+ * <p>
+ * Checks run in this order, and the order matters because each step relies on
+ * the ones before it:
+ * <ol>
+ *   <li>the account ID is not null and is greater than zero;</li>
+ *   <li>there is at least one request, and every request is non-null with a
+ *       ticket type and a positive count;</li>
+ *   <li>there are at most 25 tickets in total, infants included, at least one
+ *       adult ticket, and no more infants than adults.</li>
+ * </ol>
+ * Totals are summed as {@code long} so very large counts cannot overflow past
+ * the 25-ticket limit.
+ */
 public class TicketPurchaseValidatorImpl implements TicketPurchaseValidator {
 
+    /** The most tickets, infants included, that one purchase may contain. */
     private static final int MAX_TICKETS = 25;
 
     @Override 
@@ -20,6 +37,7 @@ public class TicketPurchaseValidatorImpl implements TicketPurchaseValidator {
 
     }
 
+    /** Rejects a null, zero or negative account ID. */
     private void validateAccountId(Long accountId) {
 
         if (accountId == null || accountId <= 0) {
@@ -27,6 +45,11 @@ public class TicketPurchaseValidatorImpl implements TicketPurchaseValidator {
         }
     }
 
+    /**
+     * Rejects a missing or empty set of requests, and any request that is null,
+     * has no type or has a non-positive count. Must run before
+     * {@link #validateTicketRules}, which assumes every request is well formed.
+     */
     private void validateRequests(TicketTypeRequest... ticketTypeRequests) {
 
         if (ticketTypeRequests == null || ticketTypeRequests.length == 0) {
@@ -46,6 +69,7 @@ public class TicketPurchaseValidatorImpl implements TicketPurchaseValidator {
 
     }
 
+    /** Enforces the 25-ticket limit, the adult requirement and the infant limit. */
     private void validateTicketRules(TicketTypeRequest... ticketTypeRequests) {
 
         int adultCount = 0;
