@@ -22,7 +22,7 @@ public class AccountIdValidatorTest {
     }
 
     @Test
-    void shouldThrowWhenAccountIdIsNull() {
+    void givenNullAccountId_shouldRejectWithInvalidAccountId() {
 
         Long accountId = null;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
@@ -32,7 +32,7 @@ public class AccountIdValidatorTest {
     }
 
     @Test
-    void shouldThrowWhenAccountIdIsZero() {
+    void givenZeroAccountId_shouldRejectWithInvalidAccountId() {
 
         Long accountId = 0L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
@@ -42,7 +42,7 @@ public class AccountIdValidatorTest {
     }
 
     @Test
-    void shouldThrowWhenAccountIdIsLessThanZero() {
+    void givenNegativeAccountId_shouldRejectWithInvalidAccountId() {
 
         Long accountId = -1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
