@@ -35,11 +35,12 @@ All collaborators are passed in through the constructor and are depended on as i
 The logic was developed largely test-first (TDD), in small steps.
 
 - **Unit tests:** each class is tested on its own.
-  - **Validators:** each validator has its own test class, with one test per rule including the boundary at 25 tickets and very large counts.
+  - **Validators:** each validator has its own test class, with one test per rule including the boundary at 25 tickets and very large counts. `TicketPurchaseValidatorTest` checks the composite: every default rule is registered, the rules run in order, and it stops at the first failure.
   - **Calculator:** each ticket type, and mixed purchases, for both price and seats.
   - **Ticket types:** the price and seat requirement of each type.
   - **Service:** the validator and calculator interfaces and the two external services are mocked (Mockito). These tests check that the service calls each of them correctly, and that nothing is paid or reserved when a request is invalid.
-- **Integration-style tests:** these use the real validator and calculator, and mock only the two external services (`TicketPaymentService` and `SeatReservationService`). They check complete purchase scenarios with real figures.
+  - **Integration-style tests:** these use the real validator and calculator, and mock only the two external services (`TicketPaymentService` and `SeatReservationService`). They check complete purchase scenarios with real figures.
+  - **Style:** tests are named `given<Scenario>_should<Outcome>` (or plain `should<Outcome>` for simple cases). Parameterised tests are used in `TicketCalculatorTest`, where only the data differs.
 
 ## Assumptions
 
