@@ -4,11 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import uk.gov.dwp.uc.pairtest.TicketPurchaseValidator;
-import org.junit.jupiter.api.function.Executable;
-import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type;
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
+import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException.InvalidPurchaseReason;
 
@@ -22,7 +22,7 @@ public class RequestsValidatorTest {
     }
 
     @Test
-    void shouldThrowWhenTicketRequestsIsEmpty() {
+    void givenNoRequests_shouldRejectWithNoTicketsRequested() {
 
         Long accountId = 1L;
 
@@ -31,7 +31,7 @@ public class RequestsValidatorTest {
     }
 
     @Test
-    void shouldThrowWhenTicketRequestsIsNull() {
+    void givenNullRequests_shouldRejectWithNoTicketsRequested() {
 
         Long accountId = 1L;
 
@@ -40,7 +40,7 @@ public class RequestsValidatorTest {
     }
 
     @Test
-    void shouldThrowWhenTicketCountIsZero() {
+    void givenZeroTicketCount_shouldRejectWithInvalidTicketCount() {
 
         Long accountId = 1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 0);
@@ -50,7 +50,7 @@ public class RequestsValidatorTest {
     }
 
     @Test
-    void shouldThrowWhenTicketCountIsLessThanZero() {
+    void givenNegativeTicketCount_shouldRejectWithInvalidTicketCount() {
 
         Long accountId = 1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, -1);
@@ -60,7 +60,7 @@ public class RequestsValidatorTest {
     }
 
     @Test
-    void shouldThrowWhenTicketTypeIsNull() {
+    void givenNullTicketType_shouldRejectWithInvalidTicketRequest() {
 
         Long accountId = 1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
@@ -68,18 +68,16 @@ public class RequestsValidatorTest {
 
         assertRejectedWith(InvalidPurchaseReason.INVALID_TICKET_REQUEST,
                 () -> requestsValidator.validate(accountId, adult, noType));
-
     }
 
     @Test
-    void shouldThrowWhenARequestInTheArrayIsNull() {
+    void givenNullRequestInTheArray_shouldRejectWithInvalidTicketRequest() {
 
         Long accountId = 1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
 
         assertRejectedWith(InvalidPurchaseReason.INVALID_TICKET_REQUEST,
                 () -> requestsValidator.validate(accountId, adult, null));
-
     }
 
 }
