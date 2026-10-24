@@ -1,7 +1,10 @@
 package uk.gov.dwp.uc.pairtest;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -9,6 +12,7 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type;
@@ -47,7 +51,7 @@ public class TicketServiceImplTest {
     }
 
     @Test
-    void validatesThePurchaseRequest() {
+    void givenAPurchase_shouldValidateTheRequest() {
 
         ticketServiceImpl.purchaseTickets(accountId, adult, child, infant);
 
@@ -55,7 +59,7 @@ public class TicketServiceImplTest {
     }
 
     @Test
-    void makesPaymentForTheCalculatedPrice() {
+    void givenAPurchase_shouldPayTheCalculatedPrice() {
 
         when(ticketCalculator.calculateTotalPrice(adult, child, infant)).thenReturn(100);
 
@@ -65,7 +69,7 @@ public class TicketServiceImplTest {
     }
 
     @Test
-    void reservesSeatsForTheCalculatedSeatCount() {
+    void givenAPurchase_shouldReserveTheCalculatedSeats() {
 
         when(ticketCalculator.calculateTotalSeats(adult, child, infant)).thenReturn(10);
 
@@ -75,7 +79,7 @@ public class TicketServiceImplTest {
     }
 
     @Test
-    void doesNotPayOrReserveSeatsWhenRequestIsInvalid() {
+    void givenInvalidRequest_shouldNotPayOrReserveSeats() {
 
         doThrow(new InvalidPurchaseException(InvalidPurchaseReason.INFANTS_EXCEED_ADULTS))
                 .when(ticketPurchaseValidator)
@@ -88,7 +92,7 @@ public class TicketServiceImplTest {
     }
 
     @Test
-    void doesNotReserveSeatsWhenPaymentFails() {
+    void givenPaymentFails_shouldNotReserveSeats() {
 
         doThrow(new RuntimeException("Payment failed"))
                 .when(ticketPaymentService)
@@ -101,6 +105,16 @@ public class TicketServiceImplTest {
 
         verify(ticketPaymentService).makePayment(accountId, 100);
         verifyNoInteractions(seatReservationService);
+    }
+
+    @Test
+    void givenAValidPurchase_shouldPayBeforeReservingSeats() {
+
+        ticketServiceImpl.purchaseTickets(accountId, adult, child, infant);
+
+        InOrder inOrder = inOrder(ticketPaymentService, seatReservationService);
+        inOrder.verify(ticketPaymentService).makePayment(eq(accountId), anyInt());
+        inOrder.verify(seatReservationService).reserveSeat(eq(accountId), anyInt());
     }
 
 }
