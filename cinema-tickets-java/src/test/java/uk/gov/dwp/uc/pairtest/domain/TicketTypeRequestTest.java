@@ -1,26 +1,27 @@
 package uk.gov.dwp.uc.pairtest.domain;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class TicketTypeRequestTest {
+public class TicketTypeRequestTest {
 
     @Test
-    void getTicketTypeReturnsTheTypeProvided() {
+    void givenATypeAndCount_shouldReturnTheType() {
 
         TicketTypeRequest ticketTypeRequest = new TicketTypeRequest(Type.ADULT, 3);
 
         Type ticketType = ticketTypeRequest.getTicketType();
 
         assertEquals(Type.ADULT, ticketType);
-
     }
 
     @Test
-    void getNoOfTicketsReturnsTheCountProvided() {
+    void givenATypeAndCount_shouldReturnTheCount() {
 
         TicketTypeRequest ticketTypeRequest = new TicketTypeRequest(Type.CHILD, 5);
 
@@ -30,19 +31,19 @@ class TicketTypeRequestTest {
     }
 
     @Test
-    void adultCostsTwentyFivePoundsAndNeedsASeat() {
+    void shouldPriceAdultAtTwentyFivePoundsWithASeat() {
         assertEquals(25, Type.ADULT.getPrice());
         assertTrue(Type.ADULT.requiresSeat());
     }
 
     @Test
-    void childCostsFifteenPoundsAndNeedsASeat() {
+    void shouldPriceChildAtFifteenPoundsWithASeat() {
         assertEquals(15, Type.CHILD.getPrice());
         assertTrue(Type.CHILD.requiresSeat());
     }
 
     @Test
-    void infantIsFreeAndSitsOnALap() {
+    void shouldMakeInfantFreeWithoutASeat() {
         assertEquals(0, Type.INFANT.getPrice());
         assertFalse(Type.INFANT.requiresSeat());
     }
