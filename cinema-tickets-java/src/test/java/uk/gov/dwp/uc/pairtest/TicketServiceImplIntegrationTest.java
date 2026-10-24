@@ -47,7 +47,7 @@ public class TicketServiceImplIntegrationTest {
     }
 
     @Test
-    void paysAndReservesSeatsForAMixOfTicketTypes() {
+    void givenAMixOfTicketTypes_shouldPayAndReserveSeats() {
 
         Long accountId = 1L;
 
@@ -62,7 +62,7 @@ public class TicketServiceImplIntegrationTest {
     }
 
     @Test
-    void paysAndReservesSeatsForOneAdultWithInfant() {
+    void givenOneAdultWithOneInfant_shouldChargeForTheAdultAndReserveOneSeat() {
 
         Long accountId = 1L;
 
@@ -76,7 +76,7 @@ public class TicketServiceImplIntegrationTest {
     }
 
     @Test
-    void paysAndReservesSeatsForExactly25Tickets() {
+    void givenExactlyTwentyFiveTickets_shouldPayAndReserveSeats() {
 
         Long accountId = 1L;
 
@@ -91,7 +91,7 @@ public class TicketServiceImplIntegrationTest {
     }
 
     @Test
-    void throwsWhenTicketsAreAboveTheMaximum() {
+    void givenMoreThanTwentyFiveTickets_shouldRejectWithTooManyTickets() {
 
         Long accountId = 1L;
 
@@ -105,7 +105,7 @@ public class TicketServiceImplIntegrationTest {
     }
 
     @Test
-    void throwsWhenNoAdultsInRequest() {
+    void givenNoAdultTickets_shouldRejectWithAdultRequired() {
 
         Long accountId = 1L;
 
