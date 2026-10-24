@@ -35,43 +35,11 @@ public class TicketPurchaseValidatorTest {
 
  
 
-    @Test
-    void shouldThrowWhenTicketRequestsIsEmpty() {
+    
 
-        Long accountId = 1L;
+   
 
-        assertRejectedWith(InvalidPurchaseReason.NO_TICKETS_REQUESTED,
-                () -> ticketPurchaseValidator.validate(accountId));
-    }
-
-    @Test
-    void shouldThrowWhenTicketRequestsIsNull() {
-
-        Long accountId = 1L;
-
-        assertRejectedWith(InvalidPurchaseReason.NO_TICKETS_REQUESTED,
-                () -> ticketPurchaseValidator.validate(accountId, (TicketTypeRequest[]) null));
-    }
-
-    @Test
-    void shouldThrowWhenTicketCountIsZero() {
-
-        Long accountId = 1L;
-        TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 0);
-
-        assertRejectedWith(InvalidPurchaseReason.INVALID_TICKET_COUNT,
-                () -> ticketPurchaseValidator.validate(accountId, adult));
-    }
-
-    @Test
-    void shouldThrowWhenTicketCountIsLessThanZero() {
-
-        Long accountId = 1L;
-        TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, -1);
-
-        assertRejectedWith(InvalidPurchaseReason.INVALID_TICKET_COUNT,
-                () -> ticketPurchaseValidator.validate(accountId, adult));
-    }
+   
 
     @Test
     void shouldThrowWhenTicketCountIsOverLimit() {
@@ -140,28 +108,7 @@ public class TicketPurchaseValidatorTest {
 
     }
 
-    @Test
-    void shouldThrowWhenTicketTypeIsNull() {
-
-        Long accountId = 1L;
-        TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
-        TicketTypeRequest noType = new TicketTypeRequest(null, 1);
-
-        assertRejectedWith(InvalidPurchaseReason.INVALID_TICKET_REQUEST,
-                () -> ticketPurchaseValidator.validate(accountId, adult, noType));
-
-    }
-
-    @Test
-    void shouldThrowWhenARequestInTheArrayIsNull() {
-
-        Long accountId = 1L;
-        TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
-
-        assertRejectedWith(InvalidPurchaseReason.INVALID_TICKET_REQUEST,
-                () -> ticketPurchaseValidator.validate(accountId, adult, null));
-
-    }
+  
 
     @Test
     void shouldThrowWhenTotalAcrossSeparateRequestsIsOverLimit() {

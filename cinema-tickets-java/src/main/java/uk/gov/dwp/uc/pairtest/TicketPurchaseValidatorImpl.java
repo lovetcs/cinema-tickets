@@ -5,6 +5,7 @@ import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException.InvalidPurchaseReason;
 import uk.gov.dwp.uc.pairtest.validation.AccountIdValidator;
+import uk.gov.dwp.uc.pairtest.validation.RequestsValidator;
 
 /**
  * Default {@link TicketPurchaseValidator}. Rejects a purchase with an
@@ -27,13 +28,14 @@ public class TicketPurchaseValidatorImpl implements TicketPurchaseValidator {
     /** The most tickets, infants included, that one purchase may contain. */
     private static final int MAX_TICKETS = 25;
     private final TicketPurchaseValidator accountIdValidator = new AccountIdValidator();
+    private final TicketPurchaseValidator requestsValidator = new RequestsValidator();
 
     @Override 
     public void validate(Long accountId, TicketTypeRequest... ticketTypeRequests) {
 
         accountIdValidator.validate(accountId, ticketTypeRequests);
 
-        validateRequests(ticketTypeRequests);
+        requestsValidator.validate(accountId, ticketTypeRequests);
 
         validateTicketRules(ticketTypeRequests);
 
