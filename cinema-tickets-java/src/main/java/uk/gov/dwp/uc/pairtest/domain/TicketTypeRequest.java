@@ -15,6 +15,8 @@ public final class TicketTypeRequest {
     private final Type type;
 
     /**
+     * Creates a request for tickets of one type.
+     *
      * @param type        the kind of ticket requested
      * @param noOfTickets how many tickets of that kind are requested
      */
@@ -24,6 +26,8 @@ public final class TicketTypeRequest {
     }
 
     /**
+     * Returns the number of tickets requested.
+     *
      * @return the number of tickets requested, as supplied by the caller
      */
     public int getNoOfTickets() {
@@ -31,6 +35,8 @@ public final class TicketTypeRequest {
     }
 
     /**
+     * Returns the type of ticket requested.
+     *
      * @return the type of ticket requested, as supplied by the caller
      */
     public Type getTicketType() {
@@ -45,9 +51,11 @@ public final class TicketTypeRequest {
 
         /** Costs £25 and is allocated a seat. */
         ADULT(25, true),
+
         /** Costs £15 and is allocated a seat. */
         CHILD(15, true),
-        /** Costs £0 and is not allocated a seat. (Infants sit on Adult's lap) */
+
+        /** Costs £0 and is not allocated a seat, as an infant sits on an adult's lap. */
         INFANT(0, false);
 
         private final int price;
@@ -59,6 +67,8 @@ public final class TicketTypeRequest {
         }
 
         /**
+         * Returns the price of one ticket of this type.
+         *
          * @return the price of one ticket of this type, in whole pounds
          */
         public int getPrice() {
@@ -66,6 +76,8 @@ public final class TicketTypeRequest {
         }
 
         /**
+         * Tells whether a ticket of this type is allocated a seat.
+         *
          * @return {@code true} if a ticket of this type is allocated a seat
          */
         public boolean requiresSeat() {
