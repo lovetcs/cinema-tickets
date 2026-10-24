@@ -62,3 +62,5 @@ The brief left some rules open. These are the choices made:
 - Invalid requests are rejected before any payment or reservation call is made.
 - The `thirdparty` packages and the `TicketService` interface were left unchanged.
 - `TicketServiceImpl` depends only on interfaces, with real implementations passed in.
+- **Money is an `int` in whole pounds.** The `TicketPaymentService` interface takes an `int` amount and all prices are whole pounds, so `int` matches the contract. In production I would use `BigDecimal` or an integer count of pence with a currency, to avoid rounding and overflow problems.
+- **`RulesValidator` holds three related rules** (the 25-ticket maximum, an adult is required, and infants cannot exceed adults). They share one pass over the requests, so I kept them together. Each could become its own validator and be added to the list in `TicketPurchaseValidatorImpl` without changing anything else.
