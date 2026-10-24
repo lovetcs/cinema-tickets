@@ -18,9 +18,9 @@ import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException.InvalidPurchase
  * {@link InvalidPurchaseException} thrown.
  * <p>
  * Assumes the requests are well formed (none null, each with a type and a
- * positive count), which {@link TicketRequestsValidator} checks, so it must be
- * run after that validator. The total is summed as a {@code long} so very
- * large counts cannot overflow past the limit.
+ * positive count), which {@link RequestsValidator} checks, so it must be
+ * run after that validator. Each request's count is checked on its own first,
+ * so a huge count is rejected before it is added to the running total.
  */
 public class RulesValidator implements TicketPurchaseValidator {
 
