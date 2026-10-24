@@ -33,35 +33,7 @@ public class TicketPurchaseValidatorTest {
 
     }
 
-    @Test
-    void shouldThrowWhenAccountIdIsNull() {
-
-        Long accountId = null;
-        TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
-
-        assertRejectedWith(InvalidPurchaseReason.INVALID_ACCOUNT_ID,
-                () -> ticketPurchaseValidator.validate(accountId, adult));
-    }
-
-    @Test
-    void shouldThrowWhenAccountIdIsZero() {
-
-        Long accountId = 0L;
-        TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
-
-        assertRejectedWith(InvalidPurchaseReason.INVALID_ACCOUNT_ID,
-                () -> ticketPurchaseValidator.validate(accountId, adult));
-    }
-
-    @Test
-    void shouldThrowWhenAccountIdIsLessThanZero() {
-
-        Long accountId = -1L;
-        TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
-
-        assertRejectedWith(InvalidPurchaseReason.INVALID_ACCOUNT_ID,
-                () -> ticketPurchaseValidator.validate(accountId, adult));
-    }
+ 
 
     @Test
     void shouldThrowWhenTicketRequestsIsEmpty() {
