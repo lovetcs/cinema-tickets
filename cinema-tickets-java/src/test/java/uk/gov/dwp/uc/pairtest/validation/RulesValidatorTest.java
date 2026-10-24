@@ -5,11 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import uk.gov.dwp.uc.pairtest.TicketPurchaseValidator;
-import org.junit.jupiter.api.function.Executable;
-import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type;
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
+import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException.InvalidPurchaseReason;
 
@@ -22,8 +22,10 @@ public class RulesValidatorTest {
         assertEquals(expected, exception.getReason());
     }
 
+    // Maximum number of tickets
+
     @Test
-    void shouldThrowWhenTicketCountIsOverLimit() {
+    void givenMoreThanTwentyFiveTickets_shouldRejectWithTooManyTickets() {
 
         Long accountId = 1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 26);
@@ -33,7 +35,7 @@ public class RulesValidatorTest {
     }
 
     @Test
-    void shouldAcceptWhenTicketCountIsAtBoundary() {
+    void givenExactlyTwentyFiveTickets_shouldAccept() {
 
         Long accountId = 1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 25);
@@ -42,7 +44,7 @@ public class RulesValidatorTest {
     }
 
     @Test
-    void shouldThrowWhenTotalAcrossSeparateRequestsIsOverLimit() {
+    void givenATotalOverTheLimitAcrossSeparateRequests_shouldRejectWithTooManyTickets() {
 
         Long accountId = 1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 13);
@@ -53,7 +55,7 @@ public class RulesValidatorTest {
     }
 
     @Test
-    void shouldCountInfantsTowardsTheMaximumNumberOfTickets() {
+    void givenInfantsAlongsideAdults_shouldCountInfantsTowardsTheMaximum() {
 
         Long accountId = 1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 13);
@@ -67,7 +69,8 @@ public class RulesValidatorTest {
     }
 
     @Test
-    void shouldThrowWhenTicketCountsWouldOverflowTheTotal() {
+    void givenVeryLargeTicketCounts_shouldRejectWithTooManyTickets() {
+
         Long accountId = 1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, Integer.MAX_VALUE);
         TicketTypeRequest child = new TicketTypeRequest(Type.CHILD, Integer.MAX_VALUE);
@@ -75,27 +78,25 @@ public class RulesValidatorTest {
 
         assertRejectedWith(InvalidPurchaseReason.TOO_MANY_TICKETS,
                 () -> rulesValidator.validate(accountId, adult, child, moreChildren));
-
     }
 
+    // Adult required
+
     @Test
-    void shouldThrowWhenChildrenAndInfantsAreRequestedWithoutAdults() {
+    void givenChildrenAndInfantsWithoutAdults_shouldRejectWithAdultRequired() {
 
         Long accountId = 1L;
-
         TicketTypeRequest child = new TicketTypeRequest(Type.CHILD, 1);
         TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 1);
 
         assertRejectedWith(InvalidPurchaseReason.ADULT_REQUIRED,
                 () -> rulesValidator.validate(accountId, child, infant));
-
     }
 
     @Test
-    void shouldThrowWhenOnlyChildrenAreRequested() {
+    void givenOnlyChildren_shouldRejectWithAdultRequired() {
 
         Long accountId = 1L;
-
         TicketTypeRequest child = new TicketTypeRequest(Type.CHILD, 1);
 
         assertRejectedWith(InvalidPurchaseReason.ADULT_REQUIRED,
@@ -103,31 +104,31 @@ public class RulesValidatorTest {
     }
 
     @Test
-    void shouldThrowWhenOnlyInfantsAreRequested() {
+    void givenOnlyInfants_shouldRejectWithAdultRequired() {
 
         Long accountId = 1L;
-
         TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 1);
 
         assertRejectedWith(InvalidPurchaseReason.ADULT_REQUIRED,
                 () -> rulesValidator.validate(accountId, infant));
     }
 
+    // Infants versus adults
+
     @Test
-    void shouldThrowWhenInfantsOutnumberAdults() {
+    void givenMoreInfantsThanAdults_shouldRejectWithInfantsExceedAdults() {
 
         Long accountId = 1L;
-
         TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 2);
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 1);
 
         assertRejectedWith(InvalidPurchaseReason.INFANTS_EXCEED_ADULTS,
                 () -> rulesValidator.validate(accountId, adult, infant));
-
     }
 
     @Test
-    void shouldAcceptInfantsEqualToAdults() {
+    void givenAsManyInfantsAsAdults_shouldAccept() {
+
         Long accountId = 1L;
         TicketTypeRequest adult = new TicketTypeRequest(Type.ADULT, 2);
         TicketTypeRequest infant = new TicketTypeRequest(Type.INFANT, 2);
