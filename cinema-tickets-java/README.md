@@ -21,7 +21,11 @@ mvn test
 All collaborators are passed in through the constructor and are depended on as interfaces, so each piece can be tested on its own.
 
 - **`TicketServiceImpl`**: coordinates a purchase: validate, calculate the price and seats, take payment, then reserve seats. It contains no business rules itself.
-- **`TicketPurchaseValidator`** (interface) / **`TicketPurchaseValidatorImpl`**: rejects invalid purchases by throwing `InvalidPurchaseException`. It has no side effects.
+- **`TicketPurchaseValidator`** (interface) / **`TicketPurchaseValidatorImpl`**: rejects invalid purchases by throwing `InvalidPurchaseException`. It has no side effects. The implementation is a composite: it runs an ordered list of small validators and stops at the first one that fails.
+- **Validators** (`validation` package): each one owns one group of rules, so a rule can be changed or added without editing the others.
+  - **`AccountIdValidator`**: the account ID is not null and is greater than zero.
+  - **`RequestsValidator`**: there is at least one request, and each request is non-null with a ticket type and a positive count.
+  - **`RulesValidator`**: at most 25 tickets in total (infants included), at least one adult, and no more infants than adults. It assumes the requests are well formed, so it runs after `RequestsValidator`.
 - **`TicketCalculator`** (interface) / **`TicketCalculatorImpl`**: works out the total price and the number of seats. It does no validation.
 - **`TicketTypeRequest`**: immutable pair of ticket type and number of tickets.
 - **`TicketTypeRequest.Type`**: each ticket type holds its own price and whether it needs a seat (Adult £25, seat; Child £15, seat; Infant £0, no seat). Adding a new type means adding one enum constant, so a type can't be added without a price.
@@ -31,7 +35,7 @@ All collaborators are passed in through the constructor and are depended on as i
 The logic was developed largely test-first (TDD), in small steps.
 
 - **Unit tests:** each class is tested on its own.
-  - **Validator:** one test per rule, including the boundary at 25 tickets and integer overflow.
+  - **Validators:** each validator has its own test class, with one test per rule including the boundary at 25 tickets and very large counts.
   - **Calculator:** each ticket type, and mixed purchases, for both price and seats.
   - **Ticket types:** the price and seat requirement of each type.
   - **Service:** the validator and calculator interfaces and the two external services are mocked (Mockito). These tests check that the service calls each of them correctly, and that nothing is paid or reserved when a request is invalid.
@@ -53,6 +57,7 @@ The brief left some rules open. These are the choices made:
 
 ## Notes
 
+- Public classes and methods have Javadoc. Run `mvn javadoc:javadoc` to generate it.
 - Invalid requests are rejected before any payment or reservation call is made.
 - The `thirdparty` packages and the `TicketService` interface were left unchanged.
 - `TicketServiceImpl` depends only on interfaces, with real implementations passed in.
